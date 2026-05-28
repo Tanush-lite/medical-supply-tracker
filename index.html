@@ -1,0 +1,96 @@
+### index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalsView - Active HQ Edition</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-slate-50 min-h-screen pb-10 font-sans">
+
+    <nav class="bg-slate-900 text-white p-5 shadow-2xl border-b-4 border-red-600 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter italic leading-none">
+                    VITALS VIEW <span class="text-red-500">FAILSAFE</span>
+                </h1>
+                <p class="text-[10px] opacity-70 uppercase tracking-widest text-emerald-400 font-bold mt-1">
+                    Single-HQ Disaster System
+                </p>
+            </div>
+
+            <button id="disaster-trigger-btn"
+                onclick="activateDisasterMode()"
+                class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold py-2 px-6 rounded-full animate-pulse shadow-lg border-2 border-white transition-all">
+                🚨 ACTIVATE DISASTER MODE
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-4">
+
+        <div id="bulk-order-zone"
+            class="hidden mb-6 p-6 bg-red-700 text-white rounded-3xl shadow-2xl border-4 border-white transform transition-all">
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                <div>
+                    <h2 class="text-2xl font-black italic uppercase leading-none mb-1">
+                        Crisis Response Active
+                    </h2>
+
+                    <p class="text-xs font-bold opacity-80 italic">
+                        Automated requirements ready for dispatch:
+                    </p>
+                </div>
+
+                <button onclick="sendBulkAlert()"
+                    class="bg-white text-red-700 px-8 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-gray-100 active:scale-95 transition-all">
+                    🚀 SEND FULL REQUIREMENTS TO HQ
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-md p-6 mb-8 border border-slate-200">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">
+                Register New Requirement
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input id="new-name" type="text" placeholder="Item Name"
+                    class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-slate-900 uppercase">
+
+                <input id="new-count" type="number" placeholder="In Stock"
+                    class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-slate-900">
+
+                <input id="new-min" type="number" placeholder="Min level"
+                    class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-slate-900">
+
+                <button onclick="addNewItem()"
+                    class="bg-emerald-600 text-white font-black py-3 rounded-xl hover:bg-emerald-700 transition-all text-xs">
+                    + REGISTER SUPPLY
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200 mb-8">
+            <div class="bg-slate-100 px-8 py-4 border-b border-slate-200 flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                <span id="mode-label">Mode: Precision Logistics</span>
+                <span id="status-tag">Status: Ready</span>
+            </div>
+
+            <div id="inventory-list" class="divide-y divide-slate-100"></div>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
+```
