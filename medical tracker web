@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalsView - Active HQ Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen pb-10 font-sans">
+
+    <nav class="bg-slate-900 text-white p-5 shadow-2xl border-b-4 border-red-600 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter italic leading-none">VITALS VIEW <span class="text-red-500">FAILSAFE</span></h1>
+                <p class="text-[10px] opacity-70 uppercase tracking-widest text-emerald-400 font-bold mt-1">Single-HQ Disaster System</p>
+            </div>
+            <button id="disaster-trigger-btn" onclick="activateDisasterMode()" class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold py-2 px-6 rounded-full animate-pulse shadow-lg border-2 border-white transition-all">
+                🚨 ACTIVATE DISASTER MODE
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-4">
+        
+        <div id="bulk-order-zone" class="hidden mb-6 p-6 bg-red-700 text-white rounded-3xl shadow-2xl border-4 border-white transform transition-all">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                <div>
+                    <h2 class="text-2xl font-black italic uppercase leading-none mb-1">Crisis Response Active</h2>
+                    <p class="text-xs font-bold opacity-80 italic">Automated requirements ready for dispatch:</p>
+                </div>
+                <button onclick="sendBulkAlert()" class="bg-white text-red-700 px-8 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-gray-100 active:scale-95 transition-all">
+                    🚀 SEND FULL REQUIREMENTS TO HQ
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-md p-6 mb-8 border border-slate-200">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Register New Requirement</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input id="new-name" type="text" placeholder="Item Name" class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-slate-900 uppercase">
+                <input id="new-count" type="number" placeholder="In Stock" class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-slate-900">
+                <input id="new-min" type="number" placeholder="Min level" class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-slate-900">
+                <button onclick="addNewItem()" class="bg-emerald-600 text-white font-black py-3 rounded-xl hover:bg-emerald-700 transition-all text-xs">
+                    + REGISTER SUPPLY
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200 mb-8">
+            <div class="bg-slate-100 px-8 py-4 border-b border-slate-200 flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                <span id="mode-label">Mode: Precision Logistics</span>
+                <span id="status-tag">Status: Ready</span>
+            </div>
+            <div id="inventory-list" class="divide-y divide-slate-100"></div>
+        </div>
+
+        <div class="bg-slate-800 text-white rounded-3xl p-6 shadow-lg border-t-4 border-emerald-500">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest opacity-60 tracking-tighter">Active Response Headquarters</h3>
+                <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded border border-emerald-500/40">CONNECTED</span>
+            </div>
+            <div class="p-4 bg-slate-700/50 rounded-2xl border border-slate-600">
+                <p class="text-[9px] font-black text-emerald-400 uppercase mb-1">Target HQ Number (WhatsApp)</p>
+                <input id="backup-phone" type="text" value="916381367066" class="bg-transparent font-mono text-lg outline-none border-b border-emerald-500/50 w-full text-white placeholder-slate-500 tracking-widest">
+                <p class="text-[8px] opacity-40 mt-2 uppercase">Messages and alerts will be routed to this number.</p>
+            </div>
+        </div>
+
+        <div class="mt-8 px-2 text-center">
+            <p class="text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest font-mono italic">--- Real-Time Transmission Logs ---</p>
+            <div id="logs" class="bg-slate-800 text-emerald-400 p-4 rounded-2xl font-mono text-[9px] h-32 overflow-y-auto shadow-inner border border-slate-700 text-left">
+                > System Online... Active HQ Channel Initialized.
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let disasterMode = false;
+
+        let supplies = [
+            { id: 1, name: "Oxygen Cylinders", count: 18, max: 40, min: 10 },
+            { id: 2, name: "IV Fluid Packs", count: 25, max: 100, min: 15 },
+            { id: 3, name: "Trauma Kits", count: 35, max: 150, min: 20 }
+        ];
+
+        function addNewItem() {
+            const nameIn = document.getElementById('new-name');
+            const countIn = document.getElementById('new-count');
+            const minIn = document.getElementById('new-min');
+            if (nameIn.value === '' || countIn.value === '' || minIn.value === '') return;
+            supplies.push({ 
+                id: Date.now(), 
+                name: nameIn.value, 
+                count: parseInt(countIn.value), 
+                min: parseInt(minIn.value), 
+                max: parseInt(countIn.value) * 2 
+            });
+            addLog(`REGISTERED NEW REQUIREMENT: ${nameIn.value}`);
+            nameIn.value = ''; countIn.value = ''; minIn.value = '';
+            render();
+        }
+
+        function activateDisasterMode() {
+            disasterMode = true;
+            document.getElementById('bulk-order-zone').classList.remove('hidden');
+            document.getElementById('disaster-trigger-btn').classList.add('hidden');
+            document.getElementById('mode-label').innerText = "Mode: CONSOLIDATED EMERGENCY";
+            document.getElementById('status-tag').innerText = "CRITICAL";
+            document.getElementById('status-tag').classList.add('text-red-600');
+            supplies.forEach(item => item.min = item.min * 3);
+            addLog("!! INCIDENT DETECTED: AUTO-SCALING REQUIREMENTS !!");
+            render();
+        }
+
+        function render() {
+            const list = document.getElementById('inventory-list');
+            list.innerHTML = '';
+            supplies.forEach(item => {
+                const isCritical = item.count <= item.min;
+                const percent = Math.min((item.count / item.max) * 100, 100);
+                const barColor = isCritical ? 'bg-red-500' : percent < 30 ? 'bg-amber-400' : 'bg-emerald-500';
+                list.innerHTML += `
+                    <div class="p-8 flex flex-col ${isCritical ? 'bg-red-50' : 'bg-white'} transition-all">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex-1">
+                                <h3 class="font-black text-slate-800 text-xl uppercase tracking-tighter">${item.name}</h3>
+                                <p class="text-[10px] font-bold ${isCritical ? 'text-red-500' : 'text-slate-400'} uppercase tracking-widest italic">Safety Threshold: ${item.min} Units</p>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-right">
+                                    <p class="text-4xl font-black ${isCritical ? 'text-red-600' : 'text-slate-800'}">${item.count}</p>
+                                    <p class="text-[10px] font-bold uppercase text-slate-400 italic">Available</p>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <button onclick="updateStock(${item.id}, 1)" class="w-12 h-10 bg-white shadow-sm rounded-t-lg border border-gray-200 hover:bg-gray-50 active:bg-gray-100 font-bold">+</button>
+                                    <button onclick="updateStock(${item.id}, -1)" class="w-12 h-10 bg-white shadow-sm rounded-b-lg border border-gray-200 hover:bg-gray-50 active:bg-gray-100 font-bold">-</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden shadow-inner mb-4">
+                            <div class="h-full ${barColor} transition-all duration-700" style="width: ${percent}%"></div>
+                        </div>
+                        ${isCritical && !disasterMode ? `
+                            <button onclick="sendAlert('individual', ${item.id})" class="bg-slate-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black active:scale-95 transition-all shadow-lg">
+                                📲 DISPATCH URGENT REQUIREMENT
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        function updateStock(id, amt) {
+            const item = supplies.find(s => s.id === id);
+            if(item.count + amt >= 0) { item.count += amt; render(); }
+        }
+
+        function sendAlert(type, id = null) {
+            const activePhone = document.getElementById('backup-phone').value;
+            let message = "";
+            
+            if (type === 'individual') {
+                const item = supplies.find(s => s.id === id);
+                message = `🚨 *URGENT REQUIREMENT* 🚨%0AItem: ${item.name}%0ANeed: ${item.min - item.count} more units.%0ACurrent Stock: ${item.count}.%0ALocation: Relief Center Alpha.`;
+            } else {
+                let list = "";
+                supplies.filter(i => i.count <= i.min).forEach(i => { list += `• ${i.name} (Need ${i.min - i.count})%0A`; });
+                message = `🚨 *CRITICAL CONSOLIDATED LIST* 🚨%0A--------------------%0A*NEEDS:*%0A${list}--------------------%0APlease dispatch all items immediately.`;
+            }
+
+            addLog(`WA ALERT SENT TO HQ: ${activePhone}`);
+            window.open(`https://wa.me/${activePhone}?text=${message}`, '_blank');
+        }
+
+        function sendBulkAlert() {
+            sendAlert('bulk');
+        }
+
+        function addLog(msg) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logContainer = document.getElementById('logs');
+            logContainer.innerHTML += `<div class="mt-1 font-bold">> [${timestamp}] ${msg}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        render();
+    </script>
+</body>
+</html>
